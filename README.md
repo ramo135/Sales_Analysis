@@ -61,4 +61,45 @@ FROM orders
 GROUP BY order_month
 ORDER BY order_month;
 
+```
+2. **Top-Selling Products:**
+
+```sql
+SELECT product_name,
+SUM(quantity_ordered) AS total_sold
+FROM order_details
+JOIN products ON order_details.product_id = products.product_id
+GROUP BY product_name
+ORDER BY total_sold DESC;
+
+```
+3. **Customer Segmentation by Total Spending:**
+
+```sql
+SELECT CASE
+           WHEN total_spending >= 1000 THEN 'High Spending'
+           WHEN total_spending >= 500 AND total_spending < 1000 THEN 'Medium Spending'
+           ELSE 'Low Spending'
+       END AS customer_segment,
+       COUNT(*) AS num_customers
+FROM (
+         SELECT customer_id, SUM(order_total) AS total_spending
+         FROM orders
+         GROUP BY customer_id
+     ) AS customer_spending
+GROUP BY customer_segment;
+
+   ```
+4. **Sales Performance by Region:**
+
+```sql
+SELECT region, SUM(order_total) AS total_sales
+   FROM orders
+   JOIN customers ON orders.customer_id = customers.customer_id
+   JOIN regions ON customers.region_id = regions.region_id
+   GROUP BY region
+   ORDER BY total_sales DESC;
+
+   
+
 
